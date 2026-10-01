@@ -6,8 +6,8 @@
     "height": 2000,
     "scrollTop": 0,
     "scrollLeft": 0,
-    "originX": 687,
-    "originY": 386,
+    "originX": 646,
+    "originY": 241,
     "zoomLevel": 0.76,
     "show": 431,
     "database": 4,
@@ -303,20 +303,20 @@
       "btrWzpzppTcCDO12_rd73": {
         "id": "btrWzpzppTcCDO12_rd73",
         "tableId": "YLfJZ7qnGoicIrwV4OPJO",
-        "name": "passwordHash",
+        "name": "password_hash",
         "comment": "",
         "dataType": "",
         "default": "",
         "options": 8,
         "ui": {
           "keys": 0,
-          "widthName": 79,
+          "widthName": 82,
           "widthComment": 60,
           "widthDataType": 60,
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1790894679269,
+          "updateAt": 1790897014966,
           "createAt": 1790894637518
         }
       },
@@ -1160,7 +1160,7 @@
           "columnIds": [
             "uu0rEvM4V0RObcRE8mFCz"
           ],
-          "x": -436.23400000000004,
+          "x": -434.73400000000004,
           "y": -98.63820000000001,
           "direction": 8
         },
@@ -1272,7 +1272,7 @@
           "columnIds": [
             "uu0rEvM4V0RObcRE8mFCz"
           ],
-          "x": -244.23400000000004,
+          "x": -241.23400000000004,
           "y": -173.6382,
           "direction": 2
         },
