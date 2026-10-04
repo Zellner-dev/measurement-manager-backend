@@ -4,7 +4,7 @@ REST API for managing workouts, exercises, workout logs and body measurements.
 
 ## Stack
 
-- Java 25, Spring Boot 4.1, Gradle (Groovy DSL)
+- Java 25, Spring Boot 4.1, Maven (with Maven Wrapper)
 - Spring Web MVC, Spring Data JPA (Hibernate), Bean Validation
 - H2 database (in-memory) with H2 console
 - No Lombok: write getters/setters explicitly
@@ -12,13 +12,13 @@ REST API for managing workouts, exercises, workout logs and body measurements.
 ## Commands
 
 ```bash
-./gradlew bootRun        # run the app (http://localhost:8080)
-./gradlew test           # run tests
-./gradlew compileJava    # quick compile check
-./gradlew build          # compile + test + package
+./mvnw spring-boot:run   # run the app (http://localhost:8080)
+./mvnw test              # run tests
+./mvnw compile           # quick compile check
+./mvnw package           # compile + test + package
 ```
 
-On Windows use `gradlew.bat` or `./gradlew` from Git Bash.
+On Windows use `mvnw.cmd` or `./mvnw` from Git Bash.
 
 ## Project structure
 
