@@ -50,7 +50,9 @@ public class MeasurementService {
         Measurement measurement = findById(id);
         measurement.setName(name);
         measurement.setMeasuredValue(measuredValue);
-        measurement.setMeasuredAt(measuredAt);
+        if (measuredAt != null) {
+            measurement.setMeasuredAt(measuredAt);
+        }
         return measurement;
     }
 

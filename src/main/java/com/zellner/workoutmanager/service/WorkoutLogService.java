@@ -46,7 +46,9 @@ public class WorkoutLogService {
     @Transactional
     public WorkoutLog update(Long id, LocalDateTime performedAt) {
         WorkoutLog workoutLog = findById(id);
-        workoutLog.setPerformedAt(performedAt);
+        if (performedAt != null) {
+            workoutLog.setPerformedAt(performedAt);
+        }
         return workoutLog;
     }
 
