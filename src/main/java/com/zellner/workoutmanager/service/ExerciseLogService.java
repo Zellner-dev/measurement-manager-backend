@@ -17,14 +17,17 @@ public class ExerciseLogService {
     private final ExerciseLogRepository exerciseLogRepository;
     private final WorkoutLogService workoutLogService;
     private final ExerciseService exerciseService;
+    private final UserService userService;
 
     public ExerciseLogService(
             ExerciseLogRepository exerciseLogRepository,
             WorkoutLogService workoutLogService,
-            ExerciseService exerciseService) {
+            ExerciseService exerciseService,
+            UserService userService) {
         this.exerciseLogRepository = exerciseLogRepository;
         this.workoutLogService = workoutLogService;
         this.exerciseService = exerciseService;
+        this.userService = userService;
     }
 
     @Transactional(readOnly = true)
@@ -41,8 +44,10 @@ public class ExerciseLogService {
 
     @Transactional(readOnly = true)
     public ExerciseLog findById(Long id) {
-        return exerciseLogRepository.findById(id)
+        ExerciseLog exerciseLog = exerciseLogRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ExerciseLog", id));
+        userService.checkOwner(exerciseLog.getWorkoutLog().getWorkout().getOwner(), "ExerciseLog", id);
+        return exerciseLog;
     }
 
     @Transactional

@@ -29,8 +29,10 @@ public class WorkoutService {
 
     @Transactional(readOnly = true)
     public Workout findById(Long id) {
-        return workoutRepository.findById(id)
+        Workout workout = workoutRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Workout", id));
+        userService.checkOwner(workout.getOwner(), "Workout", id);
+        return workout;
     }
 
     @Transactional

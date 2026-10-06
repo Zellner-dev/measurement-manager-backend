@@ -16,10 +16,13 @@ public class WorkoutLogService {
 
     private final WorkoutLogRepository workoutLogRepository;
     private final WorkoutService workoutService;
+    private final UserService userService;
 
-    public WorkoutLogService(WorkoutLogRepository workoutLogRepository, WorkoutService workoutService) {
+    public WorkoutLogService(
+            WorkoutLogRepository workoutLogRepository, WorkoutService workoutService, UserService userService) {
         this.workoutLogRepository = workoutLogRepository;
         this.workoutService = workoutService;
+        this.userService = userService;
     }
 
     @Transactional(readOnly = true)
@@ -30,13 +33,16 @@ public class WorkoutLogService {
 
     @Transactional(readOnly = true)
     public List<WorkoutLog> findByOwner(Long ownerId) {
+        userService.findById(ownerId);
         return workoutLogRepository.findByWorkoutOwnerIdOrderByPerformedAtDesc(ownerId);
     }
 
     @Transactional(readOnly = true)
     public WorkoutLog findById(Long id) {
-        return workoutLogRepository.findById(id)
+        WorkoutLog workoutLog = workoutLogRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("WorkoutLog", id));
+        userService.checkOwner(workoutLog.getWorkout().getOwner(), "WorkoutLog", id);
+        return workoutLog;
     }
 
     @Transactional

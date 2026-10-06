@@ -15,10 +15,13 @@ public class ExerciseService {
 
     private final ExerciseRepository exerciseRepository;
     private final WorkoutService workoutService;
+    private final UserService userService;
 
-    public ExerciseService(ExerciseRepository exerciseRepository, WorkoutService workoutService) {
+    public ExerciseService(
+            ExerciseRepository exerciseRepository, WorkoutService workoutService, UserService userService) {
         this.exerciseRepository = exerciseRepository;
         this.workoutService = workoutService;
+        this.userService = userService;
     }
 
     @Transactional(readOnly = true)
@@ -29,8 +32,10 @@ public class ExerciseService {
 
     @Transactional(readOnly = true)
     public Exercise findById(Long id) {
-        return exerciseRepository.findById(id)
+        Exercise exercise = exerciseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Exercise", id));
+        userService.checkOwner(exercise.getWorkout().getOwner(), "Exercise", id);
+        return exercise;
     }
 
     @Transactional

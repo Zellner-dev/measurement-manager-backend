@@ -1,7 +1,8 @@
 package com.zellner.workoutmanager.service;
 
-import java.util.List;
-
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,19 +24,32 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AuthenticationCredentialsNotFoundException("No authenticated user");
+        }
+        return userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("Authenticated user not found"));
+    }
+
+    /**
+     * Users can only access their own data. Resources owned by someone else are reported as not found,
+     * so the API does not reveal that they exist.
+     */
+    public void checkOwner(User owner, String resource, Long id) {
+        if (!owner.getId().equals(getCurrentUser().getId())) {
+            throw new ResourceNotFoundException(resource, id);
+        }
     }
 
     @Transactional(readOnly = true)
     public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User", id));
-    }
-
-    @Transactional(readOnly = true)
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow();
+        User currentUser = getCurrentUser();
+        if (!currentUser.getId().equals(id)) {
+            throw new ResourceNotFoundException("User", id);
+        }
+        return currentUser;
     }
 
     @Transactional

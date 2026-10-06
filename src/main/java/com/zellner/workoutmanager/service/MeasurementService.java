@@ -30,8 +30,10 @@ public class MeasurementService {
 
     @Transactional(readOnly = true)
     public Measurement findById(Long id) {
-        return measurementRepository.findById(id)
+        Measurement measurement = measurementRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Measurement", id));
+        userService.checkOwner(measurement.getOwner(), "Measurement", id);
+        return measurement;
     }
 
     @Transactional
