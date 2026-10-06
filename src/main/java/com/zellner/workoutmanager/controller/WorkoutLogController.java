@@ -37,6 +37,11 @@ public class WorkoutLogController {
         return service.findByWorkout(workoutId).stream().map(WorkoutLogResponse::from).toList();
     }
 
+    @GetMapping("/users/{userId}/workout-logs")
+    public List<WorkoutLogResponse> findByOwner(@PathVariable Long userId) {
+        return service.findByOwner(userId).stream().map(WorkoutLogResponse::from).toList();
+    }
+
     @PostMapping("/workouts/{workoutId}/logs")
     public ResponseEntity<WorkoutLogResponse> create(
             @PathVariable Long workoutId, @Valid @RequestBody WorkoutLogRequest request) {

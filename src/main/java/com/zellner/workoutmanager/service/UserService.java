@@ -33,6 +33,11 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User", id));
     }
 
+    @Transactional(readOnly = true)
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow();
+    }
+
     @Transactional
     public User create(String name, String email, String rawPassword) {
         if (userRepository.existsByEmail(email)) {

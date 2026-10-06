@@ -29,6 +29,11 @@ public class WorkoutLogService {
     }
 
     @Transactional(readOnly = true)
+    public List<WorkoutLog> findByOwner(Long ownerId) {
+        return workoutLogRepository.findByWorkoutOwnerIdOrderByPerformedAtDesc(ownerId);
+    }
+
+    @Transactional(readOnly = true)
     public WorkoutLog findById(Long id) {
         return workoutLogRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("WorkoutLog", id));

@@ -1,6 +1,7 @@
 package com.zellner.workoutmanager.controller;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -38,6 +39,11 @@ public class UserController {
     @GetMapping
     public List<UserResponse> findAll() {
         return userService.findAll().stream().map(UserResponse::from).toList();
+    }
+
+    @GetMapping("/me")
+    public UserResponse me(Principal principal) {
+        return UserResponse.from(userService.findByEmail(principal.getName()));
     }
 
     @GetMapping("/{id}")

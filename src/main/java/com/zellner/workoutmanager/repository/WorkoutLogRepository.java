@@ -10,4 +10,6 @@ public interface WorkoutLogRepository extends JpaRepository<WorkoutLog, Long> {
 
     List<WorkoutLog> findByWorkoutIdOrderByPerformedAtDesc(Long workoutId);
 
+    List<WorkoutLog> findByWorkoutOwnerIdOrderByPerformedAtDesc(Long ownerId);
+
 }

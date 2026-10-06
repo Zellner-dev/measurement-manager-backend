@@ -38,6 +38,11 @@ public class ExerciseLogController {
         return service.findByWorkoutLog(workoutLogId).stream().map(ExerciseLogResponse::from).toList();
     }
 
+    @GetMapping("/exercises/{exerciseId}/logs")
+    public List<ExerciseLogResponse> findByExercise(@PathVariable Long exerciseId) {
+        return service.findByExercise(exerciseId).stream().map(ExerciseLogResponse::from).toList();
+    }
+
     @PostMapping("/workout-logs/{workoutLogId}/exercise-logs")
     public ResponseEntity<ExerciseLogResponse> create(
             @PathVariable Long workoutLogId, @Valid @RequestBody ExerciseLogCreateRequest request) {
