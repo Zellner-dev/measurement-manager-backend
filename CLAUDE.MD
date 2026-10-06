@@ -6,7 +6,9 @@ REST API for managing workouts, exercises, workout logs and body measurements.
 
 - Java 25, Spring Boot 4.1, Maven (with Maven Wrapper)
 - Spring Web MVC, Spring Data JPA (Hibernate), Bean Validation
-- H2 database (in-memory) with H2 console
+- Spring Security (HTTP Basic, users from the `users` table), springdoc-openapi (Swagger UI)
+- PostgreSQL in production; in-memory H2 (PostgreSQL mode) for local development and tests
+- Flyway for schema migrations
 - No Lombok: write getters/setters explicitly
 
 ## Commands
@@ -20,14 +22,28 @@ REST API for managing workouts, exercises, workout logs and body measurements.
 
 On Windows use `mvnw.cmd` or `./mvnw` from Git Bash.
 
+Swagger UI: http://localhost:8080/swagger-ui.html (use "Authorize" with email + password).
+
+## Profiles and configuration
+
+- Default profile: H2 in memory, H2 console enabled, Swagger enabled.
+- `prod` profile (`SPRING_PROFILES_ACTIVE=prod`): PostgreSQL, H2 console and Swagger disabled.
+  Required env vars: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `CORS_ALLOWED_ORIGINS`. Optional: `SWAGGER_ENABLED`.
+- `compose.yaml` starts a local PostgreSQL to test the `prod` profile.
+- Never commit credentials; read them from environment variables.
+
 ## Project structure
 
 ```
 src/main/java/com/zellner/workoutmanager/
+├── config/       # Security, OpenAPI and other @Configuration classes
 ├── controller/   # @RestController — HTTP layer only
-├── service/      # @Service — business rules, @Transactional
+├── dto/          # request/response records
+├── exception/    # custom exceptions + @RestControllerAdvice
+├── service/      # @Service — business rules, ownership checks, @Transactional
 ├── repository/   # Spring Data JpaRepository interfaces
 └── entity/       # JPA @Entity classes
+src/main/resources/db/migration/  # Flyway migrations (V1__..., V2__...)
 docs/
 ├── database.erd.json        # ERD (erd-editor format) — source of truth for the schema
 └── commit-emoji-pattern.md  # commit message emojis
@@ -41,6 +57,9 @@ docs/
 - Use constructor injection (no `@Autowired` on fields).
 - Return proper HTTP status codes (`201 Created` on create, `204 No Content` on delete, `404` when not found). Handle errors in a `@RestControllerAdvice`.
 - Never store plain-text passwords: `passwordHash` must hold a BCrypt (or stronger) hash.
+- Users can only access their own data. Every service `findById` must call `userService.checkOwner(...)`, and
+  other methods must load resources through `findById`. Resources owned by another user return `404`, not `403`.
+- Never expose endpoints that list data from all users.
 
 ## Entity conventions
 
@@ -64,6 +83,13 @@ docs/
 | `measurements` | id, name, measured_value, measured_at, owner_id | users |
 
 All ids and foreign keys are `BIGINT` (`Long`).
+
+## Database migrations
+
+- The schema is owned by Flyway (`src/main/resources/db/migration`); Hibernate runs with `ddl-auto=validate`.
+- Any entity change needs a new migration file (`V<n>__<description>.sql`). Never edit a migration that was already applied.
+- Migrations must run on both PostgreSQL and H2 (PostgreSQL mode).
+- FKs use `ON DELETE CASCADE`, mirrored by `@OnDelete(action = OnDeleteAction.CASCADE)` on the entities.
 
 ## ERD
 
